@@ -1,58 +1,58 @@
-const bcryptjs = require("bcryptjs");
-const { response } = require("express");
+const { response } = require('express');
+const bcryptjs = require('bcryptjs')
 
-const User = require('../models/users');
+const Usuario = require('../models/usuario');
 
-const { generateJWT } = require("../helpers/generateJWT");
+const { generarJWT } = require('../helpers/generar-jwt');
 
 
 const login = async(req, res = response) => {
 
-    const { email, password } = req.body;
+    const { correo, password } = req.body;
 
     try {
-
-        // Check if the email exists
-        const user = await User.findOne({ email });
-
-        if (!user) {
+      
+        // Verificar si el email existe
+        const usuario = await Usuario.findOne({ correo });
+        if ( !usuario ) {
             return res.status(400).json({
-                msg: 'Username or password are not correct.'
+                msg: 'Usuario / Password no son correctos - correo'
             });
         }
 
-
-        // Check if the user is active
-        if (!user.status) {
+        // SI el usuario está activo
+        if ( !usuario.estado ) {
             return res.status(400).json({
-                msg: 'Username or password are not correct.'
+                msg: 'Usuario / Password no son correctos - estado: false'
             });
         }
 
-
-        // Verify password
-        const validPassword = bcryptjs.compareSync(password, user.password);
-
-        if (!validPassword) {
+        // Verificar la contraseña
+        const validPassword = bcryptjs.compareSync( password, usuario.password );
+        if ( !validPassword ) {
             return res.status(400).json({
-                msg: 'Username or password are not correct.'
+                msg: 'Usuario / Password no son correctos - password'
             });
         }
 
-        // Generate the JWT
-        const token = await generateJWT(user.id);
+        // Generar el JWT
+        const token = await generarJWT( usuario.id );
 
         res.json({
-            user,
+            usuario,
             token
-        });
+        })
 
     } catch (error) {
-        return res.status(500).json({
-            msg: `Talk to the administrator.`
+        console.log(error)
+        res.status(500).json({
+            msg: 'Hable con el administrador'
         });
-    }
+    }   
+
 }
+
+
 
 module.exports = {
     login
