@@ -10,18 +10,18 @@ const coleccionesPermitidas = [
     'roles'
 ];
 
-const buscarUsuarios = async(termino = '', res = response) => {
+const buscarUsuarios = async( termino = '', res = response ) => {
 
-    const esMongoID = ObjectId.isValid(termino); // TRUE 
+    const esMongoID = ObjectId.isValid( termino ); // TRUE 
 
-    if (esMongoID) {
+    if ( esMongoID ) {
         const usuario = await Usuario.findById(termino);
         return res.json({
-            results: (usuario) ? [usuario] : []
+            results: ( usuario ) ? [ usuario ] : []
         });
     }
 
-    const regex = new RegExp(termino, 'i');
+    const regex = new RegExp( termino, 'i' );
     const usuarios = await Usuario.find({
         $or: [{ nombre: regex }, { correo: regex }],
         $and: [{ estado: true }]
@@ -33,18 +33,18 @@ const buscarUsuarios = async(termino = '', res = response) => {
 
 }
 
-const buscarCategorias = async(termino = '', res = response) => {
+const buscarCategorias = async( termino = '', res = response ) => {
 
-    const esMongoID = ObjectId.isValid(termino); // TRUE 
+    const esMongoID = ObjectId.isValid( termino ); // TRUE 
 
-    if (esMongoID) {
+    if ( esMongoID ) {
         const categoria = await Categoria.findById(termino);
         return res.json({
-            results: (categoria) ? [categoria] : []
+            results: ( categoria ) ? [ categoria ] : []
         });
     }
 
-    const regex = new RegExp(termino, 'i');
+    const regex = new RegExp( termino, 'i' );
     const categorias = await Categoria.find({ nombre: regex, estado: true });
 
     res.json({
@@ -53,21 +53,21 @@ const buscarCategorias = async(termino = '', res = response) => {
 
 }
 
-const buscarProductos = async(termino = '', res = response) => {
+const buscarProductos = async( termino = '', res = response ) => {
 
-    const esMongoID = ObjectId.isValid(termino); // TRUE 
+    const esMongoID = ObjectId.isValid( termino ); // TRUE 
 
-    if (esMongoID) {
+    if ( esMongoID ) {
         const producto = await Producto.findById(termino)
-            .populate('categoria', 'nombre');
+                            .populate('categoria','nombre');
         return res.json({
-            results: (producto) ? [producto] : []
+            results: ( producto ) ? [ producto ] : []
         });
     }
 
-    const regex = new RegExp(termino, 'i');
+    const regex = new RegExp( termino, 'i' );
     const productos = await Producto.find({ nombre: regex, estado: true })
-        .populate('categoria', 'nombre')
+                            .populate('categoria','nombre')
 
     res.json({
         results: productos
@@ -76,11 +76,11 @@ const buscarProductos = async(termino = '', res = response) => {
 }
 
 
-const buscar = (req, res = response) => {
+const buscar = ( req, res = response ) => {
+    
+    const { coleccion, termino  } = req.params;
 
-    const { coleccion, termino } = req.params;
-
-    if (!coleccionesPermitidas.includes(coleccion)) {
+    if ( !coleccionesPermitidas.includes( coleccion ) ) {
         return res.status(400).json({
             msg: `Las colecciones permitidas son: ${ coleccionesPermitidas }`
         })
@@ -89,13 +89,13 @@ const buscar = (req, res = response) => {
     switch (coleccion) {
         case 'usuarios':
             buscarUsuarios(termino, res);
-            break;
+        break;
         case 'categorias':
             buscarCategorias(termino, res);
-            break;
+        break;
         case 'productos':
             buscarProductos(termino, res);
-            break;
+        break;
 
         default:
             res.status(500).json({
@@ -104,6 +104,8 @@ const buscar = (req, res = response) => {
     }
 
 }
+
+
 
 module.exports = {
     buscar
