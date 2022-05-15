@@ -1,4 +1,6 @@
+# Módulos de Node
 node_modules
+
+# Variables de entorno
 .env
-uploads/*
-!uploads/README.md
+
