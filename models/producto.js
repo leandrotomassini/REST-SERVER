@@ -8,8 +8,8 @@ const ProductoSchema = Schema({
     },
     estado: {
         type: Boolean,
-        required: true,
-        default: true
+        default: true,
+        required: true
     },
     usuario: {
         type: Schema.Types.ObjectId,
@@ -26,12 +26,15 @@ const ProductoSchema = Schema({
         required: true
     },
     descripcion: { type: String },
-    disponible: { type: Boolean, default: true },
+    disponible: { type: Boolean, defult: true },
+    img: { type: String },
 });
 
-ProductoSchema.methods.toJSON = function () {
-    const { __v, estado, ...data } = this.toObject();
+
+ProductoSchema.methods.toJSON = function() {
+    const { __v, estado, ...data  } = this.toObject();
     return data;
 }
 
-module.exports = model('Producto', ProductoSchema);
+
+module.exports = model( 'Producto', ProductoSchema );
